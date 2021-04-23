@@ -30,15 +30,18 @@ print('accuracy: ', accuracy(y_hat, y))
 
 #Q1_c
 print("\n*************************Q1_C-breast cancer dataset***************************")
+
+
 data,target = load_breast_cancer(return_X_y=True,as_frame=True)
+# print(data.feature_names)
 #normalizing the data between 0-1
 data = (data-data.min())/(data.max()-data.min())
-
+# print(data.shape)
 Xy = pd.concat([data, target.rename("y")],axis=1, ignore_index=True)
 Xy_shuffled = np.arange(len(Xy)) #shuffling 
 np.random.shuffle(Xy_shuffled)
 Xy_new = Xy.iloc[Xy_shuffled].reset_index(drop=True)
-
+# print(Xy_new.shape)
 
 accuracy_cv = []  
 # function defined that returns data in parts(2 and 1) depending on k value given
@@ -70,7 +73,12 @@ for k in trange(3):
     LR.fit_autograd(X_train,y_train,len(X_train))
     y_hat = LR.predict(X_test)
     if(k==1):
-        LR.plot_decision_boundary(X_train,y_train,5,10)
+        # print(X.shape)
+        data1 = load_breast_cancer()
+        name1= data1.feature_names[5]
+        name2 = data1.feature_names[10]
+     
+        LR.plot_decision_boundary(X_train,y_train,5,10,name1,name2)
     # returning accuracy found and appending in 
     accuracy_cv.append(accuracy(y_hat, y_test))
     # print(accuracy(y_hat,y_test))

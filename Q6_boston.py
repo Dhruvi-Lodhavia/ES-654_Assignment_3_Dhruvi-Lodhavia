@@ -43,7 +43,9 @@ def forwardprop_loss2(weights, bias, X_train, y_train,network):
 def predict2(network, input_layer):
     for layer in network:
         input_layer = layer.forward(input_layer)
-    return input_layer
+    A = input_layer
+    error = (np.square(np.subtract(A,y_test.reshape(-1,1))).mean())**0.5
+    return error
 
 
 
@@ -90,8 +92,8 @@ for train_index, test_index in k_fold.split(X):
             network[i].bias -= learning_rate * dL_db[i]/len(X_train)
         
 
-    A = predict2(network,X_test)
-    error = (np.square(np.subtract(A,y_test.reshape(-1,1))).mean())**0.5
+    error = predict2(network,X_test)
+    
     mse.append(error)
     print('rmse: %.4f' % error)
 

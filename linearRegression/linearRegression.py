@@ -468,6 +468,7 @@ class LinearRegression():
         y_mini =[]
         unique_classes = len(np.unique(y))
         self.labels = np.array(list(set(y)))
+        # print(self.labels)
         m = len(X.columns) #number of coloumns
         n = len(X) # number of rows
         batches = n//batch_size # number of mini batches to be created
@@ -782,23 +783,26 @@ class LinearRegression():
 
         X = np.array(self.X_1)
         y = np.array(self.Y_1)
-        prob = np.exp(np.dot(X,theta)) 
-        prob = prob/np.sum(prob,axis=1).reshape(-1,1)
+        den = np.exp(np.dot(X,theta)) 
+        prob = den/np.sum(den,axis=1).reshape(-1,1)
         cost = 0
         for i in range(len(self.labels)):
             cost = cost - np.dot(np.array(y == i,dtype =float),np.log(prob[:,i]))     
         return np.array(cost)
 
-    def plot_decision_boundary(self, X, y,i,j):
-
+    def plot_decision_boundary(self, X, y,i,j,name1,name2):
+        # print(self.coef_.shape)
+        # print(X.shape)
         fig = plt.figure()
-        c,x1,x2 = self.coef_[0],self.coef_[i],self.coef_[j]
+        intercept,feat1,feat2 = self.coef_[0],self.coef_[i],self.coef_[j]
 
-        m = -x1/x2
-        c /= -x2
-        xmin, xmax, ymin, ymax = -1.5, 1.5, -1, 1
+        m = -feat1/feat2
+        intercept /= -feat2
+        xmin, xmax, ymin, ymax = -2,2,-1,1
+
         Xs = np.array([xmin, xmax])
-        ys = m*Xs + c
+        ys = m*Xs + intercept
+        
         plt.plot(Xs, ys, 'k', lw=1, ls='--')
         plt.fill_between(Xs, ys, ymin, color='tab:red', alpha=0.2)
         plt.fill_between(Xs, ys, ymax, color='tab:blue', alpha=0.2)
@@ -806,6 +810,6 @@ class LinearRegression():
         plt.scatter(X[y==1][0],X[y==1][1],s=8,alpha=0.5,cmap='Paired',label = "1")
         plt.xlim(xmin, xmax)
         plt.ylim(ymin, ymax)
-        plt.ylabel("x2")
-        plt.xlabel("x1")
+        plt.ylabel(name2)
+        plt.xlabel(name1)
         plt.savefig("Decision_boundary.png")

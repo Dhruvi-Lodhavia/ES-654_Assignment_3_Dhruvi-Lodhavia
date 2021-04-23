@@ -38,49 +38,60 @@ def threefoldcvdataset(XY,k):
 
 
 # # ris = pd.read_csv("Iris.csv", header = None, names = ["sepal length", "sepal width", "petal length", "petal width", "label"])
-# best_lamda = 0
-# lam = [0.00001,0.0001,0.001,0.01,0.1,1,10,100]
-# accuracy_list = []
-# max_acc = 0
-# # running nested cv for 5 loops
-# for fold in trange(3):
-#     # dividing dataset into test and trai n
-#     train,test = threefoldcvdataset(Xy_new,fold)
-#     X_train = train[train.columns[:-1]]
-#     y_train = train[train.columns[-1]].astype('category')
-#     X_test = test[test.columns[:-1]]
-#     y_test = test[test.columns[-1]].astype('category')
-#     XY = pd.concat([X_train,y_train],axis = 1)   
-#     for lambda_val in lam:
-#         #varying lambda_val
-#         acc = []
-#         for k in range(3):
-#             # varying folds for validation set and dividing train set in test and validate and fitting it in the tree
-#             train1,valid = threefoldcvdataset(XY,k)
-#             X_train1 = train1[train1.columns[:-1]]
-#             y_train1 = train1[train1.columns[-1]].astype('category')
-#             X_valid = valid[valid.columns[:-1]]
-#             y_valid = valid[valid.columns[-1]].astype('category')
+best_lamda = 0
+lam = [0.00001,0.0001,0.001,0.01,0.1,1,10,100]
+accuracy_list = []
+max_acc = 0
+fold_num = 0
+accuracy_test = []
+# running nested cv for 3 loops
+for fold in trange(3):
+    # dividing dataset into test and train
+    train,test = threefoldcvdataset(Xy_new,fold)
+    X_train = train[train.columns[:-1]]
+    y_train = train[train.columns[-1]].astype('category')
+    X_test = test[test.columns[:-1]]
+    y_test = test[test.columns[-1]].astype('category')
+    XY = pd.concat([X_train,y_train],axis = 1)   
+    for lambda_val in lam:
+        #varying lambda_val
+        acc = []
+        for k in range(3):
+            # varying folds for validation set and dividing train set in test and validate and fitting it in the tree
+            train1,valid = threefoldcvdataset(XY,k)
+            X_train1 = train1[train1.columns[:-1]]
+            y_train1 = train1[train1.columns[-1]].astype('category')
+            X_valid = valid[valid.columns[:-1]]
+            y_valid = valid[valid.columns[-1]].astype('category')
 
-#             LR = LinearRegression(fit_intercept=True)
+            LR = LinearRegression(fit_intercept=True)
 
-#             LR.fit_L1_norm(X_train1, y_train1,len(X_train1),lambda_val=lambda_val) # here you can use fit_non_vectorised / fit_autograd 
-#             # y_hat = LR.predict(X)
-#             # tree = DecisionTree(criterion='information_gain',max_lambda_val = lambda_val+1)
-#             # tree.fit(X_train1, y_train1)
-#             y_hat = LR.predict(X_valid)
-#             # appending accuracy for each iteration
-#             acc.append(accuracy(y_hat, y_valid))
-#         # calc avg for each k
-#         avg_acc = sum(acc)/len(acc)
-#         # finding max acc for each lambda_val and its values
-#         if(max_acc < avg_acc):
-#             max_acc = avg_acc
-#             best_lamda = lambda_val
-#         # lam.append(lambda_val)
-#         accuracy_list.append(avg_acc)
-# for i in range(5):
-#     print("accuracy is",accuracy_list[i],"for lambda_val",lam[i])
+            LR.fit_L2_norm(X_train1, y_train1,len(X_train1),lambda_val=lambda_val) # here you can use fit_non_vectorised / fit_autograd 
+            # y_hat = LR.predict(X)
+            # tree = DecisionTree(criterion='information_gain',max_lambda_val = lambda_val+1)
+            # tree.fit(X_train1, y_train1)
+            y_hat = LR.predict(X_valid)
+            # appending accuracy for each iteration
+            acc.append(accuracy(y_hat, y_valid))
+        # calc avg for each k
+        avg_acc = sum(acc)/len(acc)
+        # finding max acc for each lambda_val and its values
+        if(max_acc < avg_acc):
+            max_acc = avg_acc
+            best_lamda = lambda_val
+            print(best_lamda)
+            fold_num = fold
+            y_hat = LR.predict(X_test)
+            accuracy_test.append(accuracy(y_hat,y_test))
+        accuracy_list.append(avg_acc)
+    # LR = LinearRegression(fit_intercept=True)
+    # LR.fit_L1_norm(X_train1, y_train1,len(X_train1),lambda_val=best_lamda)
+    # y_hat = LR.predict(X_test)
+    # accuracy_test.append(accuracy(y_hat,y_test))
+for i in range(7):
+    print("accuracy is",accuracy_list[i],"for lambda_val",lam[i],"\n")
+
+print("Final accuracy is",accuracy_test[-1],"for fold",fold_num,"and lambda ",best_lamda)
 
 
 

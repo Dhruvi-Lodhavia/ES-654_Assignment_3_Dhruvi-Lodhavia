@@ -52,7 +52,7 @@ Xy_new = Xy.iloc[Xy_shuffled].reset_index(drop=True)
 accuracy_cv = []  
 # function defined that returns data in parts(4 and 1) depending on k value given
 def threefoldcvdataset(XY,k):
-    l = int(len(XY)/3)
+    l = int(len(XY)/4)
     
     test = XY[l*k:l*(k+1)]
     test = test.reset_index(drop=True)
@@ -67,7 +67,7 @@ def threefoldcvdataset(XY,k):
     train = train.reset_index(drop=True)
     return train,test
 
-for k in trange(3):
+for k in trange(4):
     # dividing test and train into 5 different datasets
     train,test = threefoldcvdataset(Xy_new,k)
     X_train = train[train.columns[:-1]]
@@ -76,20 +76,21 @@ for k in trange(3):
     y_test = test[test.columns[-1]].astype('category')
     # calling decision tree
     LR = LinearRegression(fit_intercept=False)
-    new = LR.fit_k_class_autograd(X_train,y_train,len(X_train)/5)
+    new = LR.fit_k_class_autograd(X_train,y_train,len(X_train))
     y_hat = LR.predict_k_class(X_test)
     # returning accuracy found and appending in
     accuracy_cv.append(accuracy(y_hat, y_test))
     # print(accuracy(y_hat,y_test))
     
 # returing max accuracy
-m_acc = sum(accuracy_cv)/3
+m_acc = sum(accuracy_cv)/4
 print("accuracy is ",m_acc)
     
 #printing the confusion matrix
 print(confusion_matrix(y_test, y_hat))
 
 #plotting the confusion matrix
+
 #source - stackoverflow
 def plot_confusion_matrix(conf,target_names,title='Confusion matrix',cmap=None,normalize=True): 
 

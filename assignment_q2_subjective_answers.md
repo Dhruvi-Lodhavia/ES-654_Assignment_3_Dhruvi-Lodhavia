@@ -16,14 +16,14 @@ For L1 regularisation-
 <p align = center>
 <img width ="500" src ="./Q2_L1_optimum_lambda.JPG">
 </p>
-The optimum lambda value is 10^-5
+The optimum lambda value is 10
 
 
 For L2 regularisation - 
 <p align = center>
 <img width ="500" src ="./Q2_L2_optimum_lambda.JPG">
 </p>
-The optimum lambda value is 0.01
+The optimum lambda value is 10^-6
 
 *  From the L1 regularisation, to infer the “more” important features, i have plotted a few features with varying lambda values
 <p align = center>
